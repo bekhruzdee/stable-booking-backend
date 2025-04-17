@@ -45,12 +45,18 @@ export class BookingService {
 
       const saved = await this.bookingRepository.save(booking);
 
+      const { password, ...sanitizedUser } = saved.user;
+
       return {
         message: 'Booking created successfully✅',
-        data: saved,
+        data: {
+          ...saved,
+          user: sanitizedUser,
+        },
       };
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException(
         error.message || 'Error creating booking❌',
       );
