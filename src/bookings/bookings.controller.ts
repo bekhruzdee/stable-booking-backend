@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { BookingService } from './bookings.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/role.guard';
