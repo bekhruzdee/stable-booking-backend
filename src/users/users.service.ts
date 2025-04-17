@@ -73,8 +73,10 @@ export class UsersService {
     data: Omit<User, 'password'>[];
   }> {
     const users = await this.usersRepository.find({
+      relations: ['horses', 'bookings'],
       select: ['id', 'username', 'email', 'role', 'created_at', 'updated_at'],
     });
+
     return {
       success: true,
       message: 'Users data retrieved successfully✅',
@@ -85,6 +87,7 @@ export class UsersService {
   async findOne(id: number): Promise<Omit<User, 'password'>> {
     const user = await this.usersRepository.findOne({
       where: { id },
+      relations: ['horses', 'bookings'],
       select: ['id', 'username', 'email', 'role', 'created_at', 'updated_at'],
     });
 

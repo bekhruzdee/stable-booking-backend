@@ -1,3 +1,5 @@
+import { Booking } from 'src/bookings/entities/booking.entity';
+import { Horse } from 'src/horse/entities/horse.entity';
 import {
   Column,
   CreateDateColumn,
@@ -15,10 +17,14 @@ export class User {
   username: string;
   @Column({ unique: true, type: 'varchar', nullable: true })
   email: string;
-  @Column({ type: `varchar` })
+  @Column({ select: false})
   password: string;
   @Column({ type: 'varchar', default: 'client' })
   role: string;
+  @OneToMany(() => Horse, (horse) => horse.owner)
+  horses: Horse[];
+  @OneToMany(() => Booking, (booking) => booking.user)
+  bookings: Booking[];
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
   @UpdateDateColumn({ type: 'timestamp' })
