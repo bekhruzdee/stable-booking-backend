@@ -97,7 +97,7 @@ export class BookingService {
       });
 
       if (!booking) {
-        throw new NotFoundException(`Booking with ID ${id} not found`);
+        throw new NotFoundException(`Booking with ID ${id} not found❌`);
       }
 
       if (booking.horse?.owner) {
@@ -133,7 +133,7 @@ export class BookingService {
       const booking = await this.bookingRepository.findOne({ where: { id } });
 
       if (!booking) {
-        throw new NotFoundException(`Booking with ID ${id} not found`);
+        throw new NotFoundException(`Booking with ID ${id} not found❌`);
       }
 
       await this.bookingRepository.delete(id);

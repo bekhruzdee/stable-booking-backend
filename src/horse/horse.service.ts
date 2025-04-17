@@ -80,7 +80,7 @@ export class HorseService {
       });
 
       if (!horse) {
-        throw new NotFoundException(`Horse with ID ${id} not found`);
+        throw new NotFoundException(`Horse with ID ${id} not found❌`);
       }
 
       if (horse.owner) {
@@ -110,7 +110,7 @@ export class HorseService {
     const result = await this.horseRepository.delete(id);
 
     if (result.affected === 0) {
-      throw new NotFoundException(`Horse with ID ${id} not found`);
+      throw new NotFoundException(`Horse with ID ${id} not found❌`);
     }
 
     return {
