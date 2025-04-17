@@ -17,7 +17,7 @@ export class User {
   username: string;
   @Column({ unique: true, type: 'varchar', nullable: true })
   email: string;
-  @Column({ select: false})
+  @Column({ type: `varchar` })
   password: string;
   @Column({ type: 'varchar', default: 'client' })
   role: string;

@@ -62,6 +62,20 @@ export class BookingService {
       const bookings = await this.bookingRepository.find({
         relations: ['horse', 'user'],
       });
+  
+     
+      bookings.forEach((booking) => {
+        if (booking.horse?.owner) {
+          const { password, ...ownerWithoutPassword } = booking.horse.owner;
+          booking.horse.owner = ownerWithoutPassword as User;
+        }
+  
+        if (booking.user) {
+          const { password, ...userWithoutPassword } = booking.user;
+          booking.user = userWithoutPassword as User;
+        }
+      });
+  
       return {
         status: 200,
         message: 'All bookings fetched successfully✅',
@@ -75,18 +89,29 @@ export class BookingService {
       };
     }
   }
-
+  
   async findOne(id: number) {
     try {
       const booking = await this.bookingRepository.findOne({
         where: { id },
         relations: ['horse', 'user'],
       });
-
+  
       if (!booking) {
         throw new NotFoundException(`Booking with ID ${id} not found`);
       }
-
+  
+      
+      if (booking.horse?.owner) {
+        const { password, ...ownerWithoutPassword } = booking.horse.owner;
+        booking.horse.owner = ownerWithoutPassword as User;
+      }
+  
+      if (booking.user) {
+        const { password, ...userWithoutPassword } = booking.user;
+        booking.user = userWithoutPassword as User;
+      }
+  
       return {
         status: 200,
         message: 'Booking fetched successfully✅',
@@ -96,7 +121,7 @@ export class BookingService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-
+  
       return {
         status: 500,
         message: 'Internal Server Error❌',
@@ -104,6 +129,7 @@ export class BookingService {
       };
     }
   }
+  
 
   async remove(id: number) {
     try {

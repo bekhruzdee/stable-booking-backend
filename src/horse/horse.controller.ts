@@ -19,7 +19,7 @@ export class HorseController {
     return this.horseService.findAll();
   }
 
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard)
   @Get('id/:id')
   findOne(@Param('id') id: string) {
     return this.horseService.findOne(+id);

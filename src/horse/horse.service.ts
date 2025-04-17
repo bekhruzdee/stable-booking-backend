@@ -50,6 +50,14 @@ export class HorseService {
       const horses = await this.horseRepository.find({
         relations: ['owner', 'bookings'],
       });
+
+      horses.forEach((horse) => {
+        if (horse.owner) {
+          const { password, ...ownerWithoutPassword } = horse.owner;
+          horse.owner = ownerWithoutPassword as User;
+        }
+      });
+
       return {
         status: 200,
         message: 'All horses retrieved successfully✅',
@@ -73,6 +81,11 @@ export class HorseService {
 
       if (!horse) {
         throw new NotFoundException(`Horse with ID ${id} not found`);
+      }
+
+      if (horse.owner) {
+        const { password, ...ownerWithoutPassword } = horse.owner;
+        horse.owner = ownerWithoutPassword as User;
       }
 
       return {
