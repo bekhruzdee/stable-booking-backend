@@ -77,7 +77,7 @@ export class UsersService {
     });
     return {
       success: true,
-      message: 'Users data retrieved successfully',
+      message: 'Users data retrieved successfully✅',
       data: users,
     };
   }
@@ -117,7 +117,7 @@ export class UsersService {
 
     return {
       success: true,
-      message: 'User updated successfully',
+      message: 'User updated successfully✅',
       data: updatedUser || undefined,
     };
   }
@@ -130,7 +130,7 @@ export class UsersService {
     if (!existingUser) {
       return {
         success: false,
-        message: 'User not found',
+        message: 'User not found❌',
       };
     }
 
@@ -138,7 +138,7 @@ export class UsersService {
 
     return {
       success: true,
-      message: 'User deleted successfully',
+      message: 'User deleted successfully✅',
     };
   }
 }
