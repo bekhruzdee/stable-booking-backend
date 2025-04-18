@@ -23,7 +23,7 @@ export class UsersService {
     if (existingUser) {
       return {
         success: false,
-        message: 'User already exists',
+        message: 'User already exists❌',
       };
     }
 
