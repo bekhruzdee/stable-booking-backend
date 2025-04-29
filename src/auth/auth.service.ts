@@ -4,6 +4,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -41,30 +42,40 @@ export class AuthService {
     return 'You are registered✅';
   }
 
-  async login(loginDto: { username: string; password: string }, res: Response) {
-    const user = await this.userRepository.findOneBy({
-      username: loginDto.username,
-    });
-    if (!user) {
-      throw new NotFoundException('User Not Found ⚠️');
-    }
-    const checkPass = await bcrypt.compare(loginDto.password, user.password);
-    if (!checkPass) {
-      throw new NotFoundException('Password Error ⚠️');
-    }
+  async login(createAuthDto: CreateAuthDto, res: Response) {
+    const user = await this.validateUser(
+      createAuthDto.username,
+      createAuthDto.password,
+    );
+    const tokens = this.generateTokens(user);
 
+    this.setRefreshTokenCookie(res, tokens.refreshToken);
+
+    const { password, ...userData } = user;
+    return res.json({ userData, access_token: tokens.accessToken });
+  }
+
+  private async validateUser(username: string, password: string) {
+    const user = await this.userRepository.findOneBy({ username });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new UnauthorizedException('Invalid credentials ⚠️');
+    }
+    return user;
+  }
+
+  private generateTokens(user: User) {
     const payload = { id: user.id, username: user.username, role: user.role };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1d' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+    return { accessToken, refreshToken };
+  }
 
-    res.cookie('refresh_token', refreshToken, {
+  private setRefreshTokenCookie(res: Response, token: string) {
+    res.cookie('refresh_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-
-    const { password, ...userData } = user;
-    return res.json({ userData, access_token: accessToken });
   }
 
   logout(): { message: string } {
