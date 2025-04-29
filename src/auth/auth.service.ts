@@ -3,6 +3,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -33,13 +34,30 @@ export class AuthService {
       throw new ConflictException('Username or Email already exists.');
     }
 
-    const user = this.userRepository.create();
-    user.username = createAuthDto.username;
-    user.password = await bcrypt.hash(createAuthDto.password, 10);
-    user.email = createAuthDto.email;
+    const user = this.userRepository.create({
+      username: createAuthDto.username,
+      password: await this.hashPassword(createAuthDto.password),
+      email: createAuthDto.email,
+    });
 
-    await this.userRepository.save(user);
-    return 'You are registered✅';
+    try {
+      await this.userRepository.save(user);
+      return { message: 'Registration successful ✅' };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Something went wrong during registration.',
+      );
+    }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    try {
+      return await bcrypt.hash(password, 10);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error while hashing the password.',
+      );
+    }
   }
 
   async login(createAuthDto: CreateAuthDto, res: Response) {
